@@ -1,22 +1,21 @@
 openapi: 3.1.0
 info:
-  # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: NOW / IRL demo meetup API
 servers:
   - url: /api
-    description: Base API path
 tags:
   - name: health
-    description: Health operations
+  - name: meetups
+  - name: profile
+  - name: auth
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,13 +23,307 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /meetups:
+    get:
+      operationId: listMeetups
+      tags: [meetups]
+      summary: List live meetups
+      parameters:
+        - { name: category, in: query, schema: { type: string } }
+        - { name: zoneId, in: query, schema: { type: string } }
+        - { name: userId, in: query, schema: { type: string } }
+        - { name: mode, in: query, schema: { type: string } }
+      responses:
+        "200":
+          description: Live meetups
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MeetupListResponse" }
+    post:
+      operationId: createMeetup
+      tags: [meetups]
+      summary: Create a meetup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/MeetupInput" }
+      responses:
+        "201":
+          description: Created meetup
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MeetupResponse" }
+  /meetups/{id}:
+    get:
+      operationId: getMeetup
+      tags: [meetups]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: Meetup
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MeetupResponse" }
+  /meetups/{id}/join:
+    post:
+      operationId: joinMeetup
+      tags: [meetups]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UserActionInput" }
+      responses:
+        "200":
+          description: Joined
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MeetupResponse" }
+  /meetups/{id}/leave:
+    post:
+      operationId: leaveMeetup
+      tags: [meetups]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UserActionInput" }
+      responses:
+        "200":
+          description: Left
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MeetupResponse" }
+  /meetups/{id}/messages:
+    get:
+      operationId: listMessages
+      tags: [meetups]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        "200":
+          description: Messages
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageListResponse" }
+    post:
+      operationId: createMessage
+      tags: [meetups]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/MessageInput" }
+      responses:
+        "201":
+          description: Message
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/MessageResponse" }
+  /meetups/{id}/check-in:
+    post:
+      operationId: checkInMeetup
+      tags: [meetups]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        "200": { description: Checked in, content: { application/json: { schema: { $ref: "#/components/schemas/MeetupResponse" } } } }
+  /meetups/{id}/complete:
+    post:
+      operationId: completeMeetup
+      tags: [meetups]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        "200": { description: Completed, content: { application/json: { schema: { $ref: "#/components/schemas/MeetupResponse" } } } }
+  /meetups/{id}/share-card:
+    get:
+      operationId: getShareCard
+      tags: [meetups]
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string } }
+      responses:
+        "200": { description: Share card, content: { application/json: { schema: { $ref: "#/components/schemas/ShareCardResponse" } } } }
+  /interests:
+    get:
+      operationId: listInterests
+      tags: [profile]
+      responses:
+        "200": { description: Interests, content: { application/json: { schema: { $ref: "#/components/schemas/InterestListResponse" } } } }
+  /profile:
+    get:
+      operationId: getProfile
+      tags: [profile]
+      responses:
+        "200": { description: Profile, content: { application/json: { schema: { $ref: "#/components/schemas/ProfileResponse" } } } }
+    patch:
+      operationId: updateProfile
+      tags: [profile]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ProfileInput" }
+      responses:
+        "200": { description: Updated profile, content: { application/json: { schema: { $ref: "#/components/schemas/ProfileResponse" } } } }
+  /auth/me:
+    get:
+      operationId: getAuthMe
+      tags: [auth]
+      responses:
+        "200": { description: Session, content: { application/json: { schema: { $ref: "#/components/schemas/AuthResponse" } } } }
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      responses:
+        "200": { description: Logged out, content: { application/json: { schema: { $ref: "#/components/schemas/OkResponse" } } } }
 components:
   schemas:
     HealthStatus:
       type: object
+      required: [status]
       properties:
-        status:
-          type: string
-      required:
-        - status
-
+        status: { type: string }
+    OkResponse:
+      type: object
+      required: [success]
+      properties:
+        success: { type: boolean }
+    Meetup:
+      type: object
+      required: [id, activityTypeId, activityTitle, activityIcon, zoneId, zoneName, distanceBand, capacity, occupiedSlots, startsAt, status, participantSilhouettes]
+      properties:
+        id: { type: string }
+        activityTypeId: { type: string }
+        activityTitle: { type: string }
+        activityIcon: { type: string }
+        zoneId: { type: string }
+        zoneName: { type: string }
+        publicPlaceName: { type: string }
+        distanceBand: { type: string }
+        safeDescription: { type: string }
+        capacity: { type: integer }
+        occupiedSlots: { type: integer }
+        startsAt: { type: string }
+        status: { type: string }
+        participantSilhouettes: { type: array, items: { type: string } }
+        isUserJoined: { type: boolean }
+    MeetupListResponse:
+      type: object
+      required: [success, meetups]
+      properties:
+        success: { type: boolean }
+        mode: { type: string }
+        count: { type: integer }
+        meetups: { type: array, items: { $ref: "#/components/schemas/Meetup" } }
+    MeetupResponse:
+      type: object
+      required: [success, meetup]
+      properties:
+        success: { type: boolean }
+        mode: { type: string }
+        rawId: { type: string }
+        meetup: { $ref: "#/components/schemas/Meetup" }
+    MeetupInput:
+      type: object
+      required: [activityTypeId, zoneId, publicPlaceName]
+      properties:
+        creatorId: { type: string }
+        activityTypeId: { type: string }
+        zoneId: { type: string }
+        publicPlaceName: { type: string, minLength: 2 }
+        startsInMinutes: { type: integer, minimum: 0, maximum: 180, default: 15 }
+        capacity: { type: integer, minimum: 2, maximum: 10, default: 4 }
+        safeDescription: { type: string, maxLength: 200 }
+    UserActionInput:
+      type: object
+      properties:
+        userId: { type: string }
+    Message:
+      type: object
+      required: [id, meetupId, userId, displayName, body, createdAt]
+      properties:
+        id: { type: string }
+        meetupId: { type: string }
+        userId: { type: string }
+        displayName: { type: string }
+        body: { type: string }
+        createdAt: { type: string }
+    MessageListResponse:
+      type: object
+      required: [success, messages]
+      properties:
+        success: { type: boolean }
+        messages: { type: array, items: { $ref: "#/components/schemas/Message" } }
+    MessageResponse:
+      type: object
+      required: [success, message]
+      properties:
+        success: { type: boolean }
+        message: { $ref: "#/components/schemas/Message" }
+    MessageInput:
+      type: object
+      required: [userId, body]
+      properties:
+        userId: { type: string }
+        body: { type: string, minLength: 1, maxLength: 500 }
+    ShareCardResponse:
+      type: object
+      required: [success, card]
+      properties:
+        success: { type: boolean }
+        card: { type: object, additionalProperties: true }
+    Interest:
+      type: object
+      required: [id, label]
+      properties:
+        id: { type: string }
+        label: { type: string }
+    InterestListResponse:
+      type: object
+      required: [success, interests]
+      properties:
+        success: { type: boolean }
+        interests: { type: array, items: { $ref: "#/components/schemas/Interest" } }
+    Profile:
+      type: object
+      required: [displayName, bio, reliabilityScore, avatarRef]
+      properties:
+        displayName: { type: string }
+        bio: { type: string }
+        reliabilityScore: { type: integer }
+        avatarRef: { type: string }
+        ageBand: { type: string }
+        interestIds: { type: array, items: { type: string } }
+    ProfileInput:
+      type: object
+      required: [displayName]
+      properties:
+        displayName: { type: string, minLength: 2, maxLength: 30 }
+        bio: { type: string, maxLength: 150 }
+        interestIds: { type: array, items: { type: string }, maxItems: 5 }
+        showAgeBandAndInterests: { type: boolean }
+        avatarRef: { type: string }
+    ProfileResponse:
+      type: object
+      required: [success, profile]
+      properties:
+        success: { type: boolean }
+        profile: { $ref: "#/components/schemas/Profile" }
+        interests: { type: array, items: { $ref: "#/components/schemas/Interest" } }
+    AuthResponse:
+      type: object
+      required: [authenticated]
+      properties:
+        authenticated: { type: boolean }
+        user: { type: object, additionalProperties: true }
+        profile: { $ref: "#/components/schemas/Profile" }

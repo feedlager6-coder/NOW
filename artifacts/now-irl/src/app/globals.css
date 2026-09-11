@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 
+ * Theme Alternative 1: Warm Sunset (Default Active)
+ * Warm energetic flame aesthetic matching spontaneous outdoor activities.
+ */
+:root, [data-theme="warm-sunset"] {
+  --background: #0f172a;
+  --foreground: #f8fafc;
+  --theme-primary: #ea580c;
+  --theme-primary-hover: #f97316;
+  --theme-accent: #f59e0b;
+  --theme-surface: #1e293b;
+  --theme-surface-subtle: #090d16;
+}
+
+/* 
+ * Theme Alternative 2: Nordic Mint (Alternative Design Token Option)
+ * Crisp, clean, scandinavian dark-mode aesthetic with emerald and mint accents.
+ */
+[data-theme="nordic-mint"] {
+  --background: #090d16;
+  --foreground: #f8fafc;
+  --theme-primary: #10b981;
+  --theme-primary-hover: #34d399;
+  --theme-accent: #06b6d4;
+  --theme-surface: #131d31;
+  --theme-surface-subtle: #05080e;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  min-height: 100vh;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Prevent body scroll when modal or bottom sheet is open */
+body.modal-open {
+  overflow: hidden;
+  touch-action: none;
+}

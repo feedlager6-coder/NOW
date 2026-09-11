@@ -1,0 +1,10 @@
+@import "@workspace/now-design-system/styles.css";
+
+@layer base {
+  html { background: hsl(var(--background)); }
+  body {
+    @apply bg-background text-foreground antialiased;
+    min-width: 320px;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
