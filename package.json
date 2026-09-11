@@ -1,0 +1,51 @@
+{
+  "name": "now-irl",
+  "version": "0.1.0",
+  "private": true,
+  "description": "NOW / IRL — Spontaneous offline group activities in whitelisted public zones (DEMO ONLY)",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:unit": "vitest run tests/unit",
+    "test:integration": "vitest run tests/integration",
+    "test:e2e": "playwright test",
+    "check": "npm run lint && npm run typecheck && npm run test",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx src/db/migrate.ts",
+    "db:seed": "tsx src/db/seed.ts",
+    "purge:chats": "tsx src/db/purge-chats.ts",
+    "meetups:expire": "tsx src/db/expire-meetups.ts"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "drizzle-orm": "^0.35.3",
+    "lucide-react": "^0.453.0",
+    "next": "14.2.15",
+    "pg": "^8.13.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwind-merge": "^2.5.4",
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.2.12",
+    "@playwright/test": "^1.48.1",
+    "@types/node": "^20.17.0",
+    "@types/pg": "^8.11.10",
+    "@types/react": "^18.3.12",
+    "@types/react-dom": "^18.3.1",
+    "autoprefixer": "^10.4.20",
+    "drizzle-kit": "^0.26.2",
+    "eslint": "^8.57.1",
+    "eslint-config-next": "14.2.15",
+    "postcss": "^8.4.47",
+    "tailwindcss": "^3.4.14",
+    "tsx": "^4.19.1",
+    "typescript": "^5.6.3",
+    "vitest": "^2.1.3"
+  }
+}
