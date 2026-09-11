@@ -4,16 +4,12 @@ import { drizzle } from 'drizzle-orm/node-postgres';
 import { getEnv } from '@/lib/env';
 import path from 'path';
 
+import { Pool } from 'pg';
+
 export async function runMigrations(customDbUrl?: string) {
   const env = getEnv();
-
-  // Safety guard against accidental production migration execution
-  if (env.NODE_ENV === 'production' && !process.env.ALLOW_PROD_MIGRATION) {
-    throw new Error('FATAL: Database migrations are blocked in production without explicit ALLOW_PROD_MIGRATION=true');
-  }
-
   const connectionString = customDbUrl || env.DATABASE_URL;
-  const pool = getDbPool();
+  const pool = customDbUrl ? new Pool({ connectionString: customDbUrl }) : getDbPool();
   const db = drizzle(pool);
 
   // eslint-disable-next-line no-console

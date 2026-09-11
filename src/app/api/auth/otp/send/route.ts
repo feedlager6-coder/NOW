@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { devOtpProvider } from '@/infrastructure/auth/dev-otp-provider';
+import { cookies } from 'next/headers';
+import { getActiveOtpProvider } from '@/infrastructure/auth/otp-factory';
+import { StagingGateService } from '@/domain/auth/staging-gate-service';
+import { getEnv } from '@/lib/env';
 import { logger } from '@/lib/logger';
 
 export const dynamic = 'force-dynamic';
@@ -11,6 +14,24 @@ const sendOtpSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const env = getEnv();
+
+    // Enforce Staging Gate if in staging_gate mode
+    if (env.AUTH_MODE === 'staging_gate') {
+      const cookieStore = cookies();
+      const gateToken = cookieStore.get(StagingGateService.COOKIE_NAME)?.value;
+      if (!StagingGateService.verifyGateToken(gateToken)) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'STAGING_GATE_REQUIRED',
+            message: 'Доступ к закрытому стенду заблокирован. Требуется ввести инвайт-код доступа стенда.',
+          },
+          { status: 403 }
+        );
+      }
+    }
+
     const body = await request.json();
     const parsed = sendOtpSchema.safeParse(body);
 
@@ -22,7 +43,8 @@ export async function POST(request: Request) {
     }
 
     const phone = parsed.data.phone.trim();
-    const result = await devOtpProvider.sendOtp(phone);
+    const otpProvider = getActiveOtpProvider();
+    const result = await otpProvider.sendOtp(phone);
 
     if (!result.success) {
       if (result.error === 'RATE_LIMIT_EXCEEDED') {
@@ -41,7 +63,8 @@ export async function POST(request: Request) {
           success: false,
           error: result.error,
           message:
-            'В режиме локальной разработки разрешены только синтетические номера вида +79990000001 ... +79990000099.',
+            result.message ||
+            'В режиме закрытого тестирования разрешены только синтетические номера вида +79990000001 ... +79990000099.',
         },
         { status: 400 }
       );
@@ -57,7 +80,7 @@ export async function POST(request: Request) {
       {
         success: true,
         expiresInSeconds: result.expiresInSeconds,
-        devHint: 'В режиме разработки используйте фиксированный код: 000000',
+        devHint: env.AUTH_MODE === 'dev_otp' ? 'В режиме разработки используйте фиксированный код: 000000' : undefined,
       },
       { status: 200 }
     );

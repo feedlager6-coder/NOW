@@ -9,7 +9,7 @@ export class DevOtpProvider implements OtpProvider {
   private static readonly RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
 
   constructor() {
-    if (process.env.NODE_ENV === 'production' && process.env.ALLOW_DEV_OTP !== 'true') {
+    if (process.env.NODE_ENV === 'production') {
       throw new Error('SECURITY VIOLATION: DevOtpProvider cannot be instantiated in production environment!');
     }
   }

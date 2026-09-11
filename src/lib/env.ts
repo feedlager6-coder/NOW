@@ -20,7 +20,11 @@ export const envSchema = z.object({
   EMERGENCY_PHONE_URL: z.string().default('tel:112'),
   CHAT_RETENTION_HOURS: z.coerce.number().default(12),
   NEXT_PUBLIC_ENABLE_DEMO_MODE: z.string().default('true'),
-  NEXT_PUBLIC_DEMO_MODE: z.string().default('true'),
+  AUTH_MODE: z.enum(['dev_otp', 'staging_gate', 'production_sms']).default('dev_otp'),
+  NEXT_PUBLIC_STAGING_MODE: z.string().default('false'),
+  STAGING_ACCESS_CODE: z.string().optional(),
+  STAGING_OTP_CODE: z.string().optional(),
+  STAGING_SEED_ENABLED: z.string().default('false'),
 });
 
 export type Env = z.infer<typeof envSchema>;
@@ -37,6 +41,10 @@ export function getEnv(): Env {
     parsedEnv = result.data;
   }
   return parsedEnv;
+}
+
+export function resetEnvCache(): void {
+  parsedEnv = null;
 }
 
 export function validateEnv(customEnv?: Record<string, unknown>): Env {

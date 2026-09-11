@@ -17,7 +17,7 @@ describe('Environment Variables Zod Schema Tests for NOW / IRL', () => {
     expect(parsed.MAP_PROVIDER).toBe('mock');
     expect(parsed.EMERGENCY_PHONE_URL).toBe('tel:112');
     expect(parsed.CHAT_RETENTION_HOURS).toBe(12);
-    expect(parsed.NEXT_PUBLIC_DEMO_MODE).toBe('true');
+    expect(parsed.NEXT_PUBLIC_ENABLE_DEMO_MODE).toBe('true');
   });
 
   it('should fail if invalid NODE_ENV is provided', () => {

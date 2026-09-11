@@ -12,9 +12,9 @@ export { DEMO_USERS, DEMO_ACTIVITY_TYPES, DEMO_PUBLIC_ZONES };
 export async function runSeed() {
   const env = getEnv();
 
-  // Safety guard: NEVER run seed in production!
-  if (env.NODE_ENV === 'production') {
-    throw new Error('FATAL: Seed execution is strictly prohibited when NODE_ENV=production');
+  // Safety guard: Seed execution in production requires explicit STAGING_SEED_ENABLED=true
+  if (env.NODE_ENV === 'production' && process.env.STAGING_SEED_ENABLED !== 'true') {
+    throw new Error('FATAL: Seed execution is prohibited in production environment unless STAGING_SEED_ENABLED=true');
   }
 
   const pool = getDbPool();

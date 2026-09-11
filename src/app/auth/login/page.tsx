@@ -6,15 +6,53 @@ import Link from 'next/link';
 
 export default function LoginPage() {
   const router = useRouter();
+  const isStagingMode = process.env.NEXT_PUBLIC_STAGING_MODE === 'true';
   const [phone, setPhone] = useState('+79990000001');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Staging gate state
+  const [accessCode, setAccessCode] = useState('');
+  const [gateRequired, setGateRequired] = useState(isStagingMode);
+  const [gateUnlocked, setGateUnlocked] = useState(!isStagingMode);
+  const [gateError, setGateError] = useState<string | null>(null);
+  const [isGateSubmitting, setIsGateSubmitting] = useState(false);
 
   const presetNumbers = [
     { label: 'Алекс (Dev)', phone: '+79990000001' },
     { label: 'Мира (Dev)', phone: '+79990000002' },
     { label: 'Тимур (Dev)', phone: '+79990000003' },
   ];
+
+  const handleStagingGateSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setGateError(null);
+    setIsGateSubmitting(true);
+
+    try {
+      const res = await fetch('/api/auth/staging-gate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ accessCode }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        setGateError(data.message || 'Неверный код доступа');
+        setIsGateSubmitting(false);
+        return;
+      }
+
+      setAccessCode('');
+      setGateUnlocked(true);
+      setGateRequired(false);
+      setError(null);
+    } catch {
+      setGateError('Не удалось связаться с сервером');
+    } finally {
+      setIsGateSubmitting(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -30,7 +68,13 @@ export default function LoginPage() {
 
       const data = await res.json();
       if (!res.ok || !data.success) {
-        setError(data.message || data.error || 'Ошибка отправки кода');
+        if (data.error === 'STAGING_GATE_REQUIRED') {
+          setGateRequired(true);
+          setGateUnlocked(false);
+          setError(data.message || 'Требуется инвайт-код доступа стенда');
+        } else {
+          setError(data.message || data.error || 'Ошибка отправки кода');
+        }
         setIsLoading(false);
         return;
       }
@@ -48,23 +92,68 @@ export default function LoginPage() {
       <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
         <div className="text-center space-y-2">
           <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-orange-500/10 border border-orange-500/30">
-            <span className="text-2xl">📱</span>
+            <span className="text-2xl">{gateRequired && !gateUnlocked ? '🔐' : '📱'}</span>
           </div>
-          <h1 className="text-xl font-bold text-white">Вход по номеру</h1>
+          <h1 className="text-xl font-bold text-white">
+            {gateRequired && !gateUnlocked ? 'Закрытое тестирование' : 'Вход по номеру'}
+          </h1>
           <p className="text-xs text-slate-400">
-            Введите синтетический номер для тестирования Local Mode
+            {gateRequired && !gateUnlocked
+              ? 'Введите инвайт-код доступа стенда'
+              : 'Введите синтетический номер для тестирования Local Mode'}
           </p>
         </div>
 
-        {/* Dev hint badge */}
-        <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl space-y-1">
-          <p className="text-[11px] font-bold text-amber-400 uppercase tracking-wide">
-            🛠️ Dev OTP Sandbox
-          </p>
-          <p className="text-[11px] text-slate-300">
-            В локальном режиме разрешены тестовые номера вида <code className="bg-black/40 px-1 py-0.5 rounded text-amber-300 font-mono">+799900000XX</code>. Код подтверждения: <strong className="text-white font-mono">000000</strong>.
-          </p>
-        </div>
+        {/* Staging Gate Form */}
+        {gateRequired && !gateUnlocked ? (
+          <form onSubmit={handleStagingGateSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <label htmlFor="access-code" className="text-xs font-semibold text-slate-300">
+                Код доступа стенда (Staging Access Code)
+              </label>
+              <input
+                id="access-code"
+                type="password"
+                value={accessCode}
+                onChange={(e) => setAccessCode(e.target.value)}
+                placeholder="Введите полученный инвайт-код"
+                required
+                className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:border-amber-500 transition-colors"
+              />
+            </div>
+
+            {gateError && (
+              <div className="p-2.5 bg-rose-500/10 border border-rose-500/30 rounded-xl text-rose-300 text-xs">
+                {gateError}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              disabled={isGateSubmitting}
+              className="w-full py-3 px-4 rounded-xl bg-amber-600 hover:bg-amber-500 disabled:opacity-50 text-white font-bold text-sm shadow-lg shadow-amber-600/20 transition-all flex items-center justify-center gap-2"
+            >
+              {isGateSubmitting ? <span>Проверяю доступ...</span> : <span>Разблокировать стенд</span>}
+            </button>
+          </form>
+        ) : (
+          <>
+            {/* Dev hint badge */}
+            <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl space-y-1">
+              <p className="text-[11px] font-bold text-amber-400 uppercase tracking-wide">
+                {isStagingMode ? '🛠️ Staging Sandbox' : '🛠️ Dev OTP Sandbox'}
+              </p>
+              <p className="text-[11px] text-slate-300">
+                Разрешены тестовые номера вида <code className="bg-black/40 px-1 py-0.5 rounded text-amber-300 font-mono">+799900000XX</code>.
+                {isStagingMode ? ' Код подтверждения отправлен в закрытый чат.' : ' Код подтверждения: '}
+                {!isStagingMode && <strong className="text-white font-mono">000000</strong>}
+              </p>
+              {isStagingMode && (
+                <p className="text-[10px] text-amber-300/90 pt-0.5">
+                  ⚠️ Не указывайте реальные адреса, телефоны, документы и другую чувствительную информацию.
+                </p>
+              )}
+            </div>
 
         {/* Preset quick buttons */}
         <div className="space-y-1.5">
@@ -121,6 +210,8 @@ export default function LoginPage() {
             )}
           </button>
         </form>
+        </>
+        )}
 
         <div className="pt-2 text-center">
           <Link

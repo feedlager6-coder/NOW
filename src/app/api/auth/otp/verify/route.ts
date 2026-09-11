@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-import { devOtpProvider } from '@/infrastructure/auth/dev-otp-provider';
+import { cookies } from 'next/headers';
+import { getActiveOtpProvider } from '@/infrastructure/auth/otp-factory';
+import { StagingGateService } from '@/domain/auth/staging-gate-service';
 import { SessionService } from '@/domain/auth/session-service';
 import { UserRepository } from '@/repositories/user-repository';
 import { setSessionCookie } from '@/lib/auth-session';
@@ -16,6 +18,24 @@ const verifyOtpSchema = z.object({
 
 export async function POST(request: Request) {
   try {
+    const env = getEnv();
+
+    // Enforce Staging Gate if in staging_gate mode
+    if (env.AUTH_MODE === 'staging_gate') {
+      const cookieStore = cookies();
+      const gateToken = cookieStore.get(StagingGateService.COOKIE_NAME)?.value;
+      if (!StagingGateService.verifyGateToken(gateToken)) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'STAGING_GATE_REQUIRED',
+            message: 'Доступ к закрытому стенду заблокирован. Требуется ввести инвайт-код доступа стенда.',
+          },
+          { status: 403 }
+        );
+      }
+    }
+
     const body = await request.json();
     const parsed = verifyOtpSchema.safeParse(body);
 
@@ -29,22 +49,20 @@ export async function POST(request: Request) {
     const phone = parsed.data.phone.trim();
     const code = parsed.data.code.trim();
 
-    const otpVerification = await devOtpProvider.verifyOtp(phone, code);
+    const otpProvider = getActiveOtpProvider();
+    const otpVerification = await otpProvider.verifyOtp(phone, code);
     if (!otpVerification.success) {
       return NextResponse.json(
         {
           success: false,
           error: otpVerification.error,
           message:
-            otpVerification.error === 'INVALID_CODE'
-              ? 'Неверный проверочный код. Для dev-номеров используйте 000000.'
-              : 'Ошибка проверки кода.',
+            otpVerification.message || 'Неверный проверочный код.',
         },
         { status: 400 }
       );
     }
 
-    const env = getEnv();
     const phoneLookupHash = SessionService.computePhoneLookupHash(phone, env.OTP_HMAC_SECRET);
 
     // Find or create user in database

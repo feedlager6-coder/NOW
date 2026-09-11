@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import React from 'react';
+import { StagingBanner } from '@/components/StagingBanner';
 
 export const metadata: Metadata = {
   title: 'NOW / IRL — Спонтанные встречи в реальном времени [DEMO]',
@@ -23,6 +24,9 @@ export default function RootLayout({
   return (
     <html lang="ru" className="dark">
       <body className="flex flex-col min-h-screen bg-[#0B0F19] text-slate-100 antialiased selection:bg-orange-500 selection:text-white font-sans">
+        {/* Staging disclaimer banner when NEXT_PUBLIC_STAGING_MODE=true */}
+        <StagingBanner />
+
         {/* Persistent prominent DEMO badge across all views */}
         <aside
           role="region"

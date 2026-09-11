@@ -69,23 +69,34 @@ function VerifyForm() {
         </p>
       </div>
 
-      <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl space-y-2">
-        <div className="flex items-center justify-between">
+      {process.env.NEXT_PUBLIC_STAGING_MODE === 'true' ? (
+        <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl space-y-1">
           <span className="text-[11px] font-bold text-amber-400 uppercase tracking-wide">
-            Dev Код: 000000
+            🛠️ Код закрытого тестирования
           </span>
-          <button
-            type="button"
-            onClick={handlePasteDevCode}
-            className="text-[11px] font-semibold text-amber-300 hover:text-amber-200 underline"
-          >
-            Вставить 000000
-          </button>
+          <p className="text-[11px] text-slate-300">
+            Введите 6-значный проверочный код стенда, полученный от организатора тестирования.
+          </p>
         </div>
-        <p className="text-[11px] text-slate-300">
-          Для безопасного локального тестирования используется единый фиксированный dev-код.
-        </p>
-      </div>
+      ) : (
+        <div className="p-3 bg-amber-500/10 border border-amber-500/30 rounded-xl space-y-2">
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] font-bold text-amber-400 uppercase tracking-wide">
+              Dev Код: 000000
+            </span>
+            <button
+              type="button"
+              onClick={handlePasteDevCode}
+              className="text-[11px] font-semibold text-amber-300 hover:text-amber-200 underline"
+            >
+              Вставить 000000
+            </button>
+          </div>
+          <p className="text-[11px] text-slate-300">
+            Для безопасного локального тестирования используется единый фиксированный dev-код.
+          </p>
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-1.5">

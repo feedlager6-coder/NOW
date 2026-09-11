@@ -17,11 +17,13 @@ describe('Database Seed Safety Guard Tests', () => {
       EMERGENCY_PHONE_URL: 'tel:112',
       CHAT_RETENTION_HOURS: 12,
       NEXT_PUBLIC_ENABLE_DEMO_MODE: 'true',
-      NEXT_PUBLIC_DEMO_MODE: 'true',
+      AUTH_MODE: 'staging_gate',
+      NEXT_PUBLIC_STAGING_MODE: 'true',
+      STAGING_SEED_ENABLED: 'false',
     });
 
     await expect(runSeed()).rejects.toThrow(
-      'FATAL: Seed execution is strictly prohibited when NODE_ENV=production'
+      'FATAL: Seed execution is prohibited in production environment unless STAGING_SEED_ENABLED=true'
     );
   });
 });
