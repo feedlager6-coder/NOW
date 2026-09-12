@@ -118,6 +118,9 @@ const interests = [
   { id: "workout", label: "Воркаут" },
 ];
 
+let pendingPhone = "";
+let ageConfirmed = true;
+
 function serializeMeetup(meetup: Meetup, userId?: string) {
   return {
     ...meetup,
@@ -337,8 +340,47 @@ router.get("/auth/me", (_req, res) => {
   });
 });
 
+router.post("/auth/otp/send", (req, res) => {
+  const phone = typeof req.body?.phone === "string" ? req.body.phone.trim() : "";
+  if (phone.length < 5) {
+    res.status(422).json({ success: false, error: "INVALID_PHONE", message: "Введите номер телефона." });
+    return;
+  }
+  pendingPhone = phone;
+  res.json({ success: true, message: "Код отправлен.", devCode: "000000" });
+});
+
+router.post("/auth/otp/verify", (req, res) => {
+  const phone = typeof req.body?.phone === "string" ? req.body.phone.trim() : pendingPhone;
+  const code = typeof req.body?.code === "string" ? req.body.code.trim() : "";
+  if (!phone || code !== "000000") {
+    res.status(422).json({ success: false, error: "INVALID_CODE", message: "Для demo используйте код 000000." });
+    return;
+  }
+  pendingPhone = phone;
+  res.json({ success: true, needsAgeGate: !ageConfirmed, user: { id: "demo-user-alex" }, profile });
+});
+
 router.post("/auth/logout", (_req, res) => {
   res.json({ success: true });
+});
+
+router.post("/auth/staging-gate", (_req, res) => {
+  res.json({ success: true, unlocked: true });
+});
+
+router.post("/onboarding/age-gate", (_req, res) => {
+  ageConfirmed = true;
+  res.json({ success: true, ageBand: profile.ageBand });
+});
+
+router.post("/profile/avatar", (_req, res) => {
+  res.json({ success: true, avatarRef: profile.avatarRef });
+});
+
+router.delete("/profile/avatar", (_req, res) => {
+  profile.avatarRef = "/avatars/silhouette-1.svg";
+  res.json({ success: true, avatarRef: profile.avatarRef });
 });
 
 export default router;

@@ -22,4 +22,95 @@
     background: hsl(var(--primary) / 0.35);
     color: hsl(var(--foreground));
   }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 3px;
+  }
+}
+
+@layer components {
+  .city-grid {
+    background-image:
+      linear-gradient(hsl(var(--border) / 0.32) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--border) / 0.32) 1px, transparent 1px),
+      radial-gradient(circle at 50% 45%, hsl(var(--primary) / 0.14), transparent 34%);
+    background-size: 28px 28px, 28px 28px, auto;
+    mask-image: linear-gradient(to bottom, transparent, black 18%, black 82%, transparent);
+  }
+
+  .city-pin {
+    --activity-glow: var(--primary);
+    display: grid;
+    place-items: center;
+    width: 36px;
+    height: 36px;
+    transform: translate(-50%, -50%);
+    color: hsl(var(--activity-glow));
+    transition: transform 220ms ease;
+  }
+
+  .city-pin::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 999px;
+    background: hsl(var(--activity-glow) / 0.16);
+    box-shadow: 0 0 24px hsl(var(--activity-glow) / 0.3);
+    animation: city-breathe 2400ms ease-in-out infinite;
+  }
+
+  .city-pin:hover,
+  .city-pin.is-selected {
+    transform: translate(-50%, -50%) scale(1.18);
+  }
+
+  .city-pin-core {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 18px;
+    height: 18px;
+    border: 2px solid hsl(var(--activity-glow));
+    border-radius: 999px;
+    background: hsl(var(--background));
+    color: hsl(var(--activity-glow));
+    font-size: 9px;
+    font-weight: 800;
+  }
+
+  .activity-walk { --activity-glow: var(--primary); color: hsl(var(--primary)); }
+  .activity-coffee { --activity-glow: var(--chart-1); color: hsl(var(--chart-1)); }
+  .activity-sport { --activity-glow: var(--chart-3); color: hsl(var(--chart-3)); }
+  .activity-games { --activity-glow: var(--chart-4); color: hsl(var(--chart-4)); }
+  .activity-study { --activity-glow: var(--chart-2); color: hsl(var(--chart-2)); }
+
+  .meetup-card {
+    position: relative;
+    overflow: hidden;
+  }
+
+  .meetup-card::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 3px;
+    background: hsl(var(--activity-glow));
+    box-shadow: 0 0 18px hsl(var(--activity-glow) / 0.65);
+  }
+}
+
+@keyframes city-breathe {
+  0%, 100% { transform: scale(0.76); opacity: 0.55; }
+  50% { transform: scale(1.12); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+  }
 }
