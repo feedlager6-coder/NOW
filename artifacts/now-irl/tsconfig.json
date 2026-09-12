@@ -10,6 +10,7 @@
     "src/components/**",
     "src/db/**",
     "src/domain/**",
+    "src/infrastructure/**",
     "src/hooks/**",
     "src/lib/**",
     "src/providers/**",
