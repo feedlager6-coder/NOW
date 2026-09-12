@@ -1,15 +1,19 @@
-# [Project name]
+# NOW / IRL
 
-_Replace the heading above with the project's name, and this line with one sentence describing what this app does for users._
+Real-time discovery of spontaneous, nearby public activities.
 
 ## Run & Operate
 
-- `pnpm --filter @workspace/api-server run dev` — run the API server (port 5000)
+- `pnpm --filter @workspace/api-server run dev` — run the API server on `PORT`
+- `PORT=4173 BASE_PATH=/ pnpm --filter @workspace/now-irl run build` — build the web app
+- `pnpm run railway:build` — build the single-service Railway deployment
+- `pnpm run railway:start` — serve the built web app and API on Railway's `PORT`
 - `pnpm run typecheck` — full typecheck across all packages
 - `pnpm run build` — typecheck + build all packages
 - `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from the OpenAPI spec
 - `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- Required env: `DATABASE_URL` — Postgres connection string
+- Railway health check: `GET /api/healthz`
+- The current Railway demo deployment uses in-memory data; `DATABASE_URL` is not required until persistent storage is enabled.
 
 ## Stack
 
@@ -22,23 +26,32 @@ _Replace the heading above with the project's name, and this line with one sente
 
 ## Where things live
 
-_Populate as you build — short repo map plus pointers to the source-of-truth file for DB schema, API contracts, theme files, etc._
+- `artifacts/now-irl` — Vite + React web app
+- `artifacts/api-server` — Express API and Railway static-file server
+- `artifacts/now-design-system` — shared NOW tokens and primitives
+- `lib/api-spec/openapi.yaml` — API contract source of truth
+- `railway.json` — Railway build, start, and health-check configuration
 
 ## Architecture decisions
 
-_Populate as you build — non-obvious choices a reader couldn't infer from the code (3-5 bullets)._
+- Railway runs one public service: Express serves `/api/*` and the compiled Vite SPA from the same `PORT`.
+- The web build uses `BASE_PATH=/` for Railway; Replit's artifact workflow supplies its own path.
+- API hooks are generated from the OpenAPI contract instead of being handwritten in the frontend.
+- Demo state remains in memory for this migration; PostgreSQL persistence is a follow-up.
 
 ## Product
 
-_Describe the high-level user-facing capabilities of this app once they exist._
+NOW / IRL helps adults find and join nearby public activities such as walks, coffee, sports, games, and study sessions. The experience is anonymous-first, safety-focused, and designed for plans that start within minutes.
 
 ## User preferences
 
-_Populate as you build — explicit user instructions worth remembering across sessions._
+- Native mobile work is out of scope for this iOS Replit context; keep this project web-only.
 
 ## Gotchas
 
-_Populate as you build — sharp edges, "always run X before Y" rules._
+- Use pnpm, not npm or yarn; the root preinstall guard rejects other package managers.
+- `now-irl`'s Vite config requires `PORT` and `BASE_PATH` when building directly.
+- Railway must use the root `railway.json` commands rather than the default Next.js commands from the imported backup.
 
 ## Pointers
 
