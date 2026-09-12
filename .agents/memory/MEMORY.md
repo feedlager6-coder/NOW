@@ -1,0 +1,2 @@
+- [Dark design-system consumption](dark-design-system-consumption.md) — the shared NOW stylesheet defaults to light tokens; select dark mode at the app root.
+- [Route parameter boundary](route-param-boundary.md) — read wouter params inside the matching parameterized route component.

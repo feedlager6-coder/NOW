@@ -1,0 +1,434 @@
+ROLE
+
+Act as a Staff Product Designer (Airbnb + Telegram + Uber + Apple Human Interface + Linear).
+
+You are not redesigning individual screens.
+
+You are creating a complete product design system and UX architecture for a mobile app called NOW.
+
+The current MVP works.
+
+The UI must be rebuilt from scratch while keeping functionality.
+
+Every design decision must improve usability, speed, emotional response and viral sharing.
+
+⸻
+
+PRODUCT
+
+NOW is a real-time social app.
+
+Users open the app.
+
+Press one button.
+
+Meet people nearby within minutes.
+
+The experience should feel cinematic.
+
+Opening the app should create excitement.
+
+Think less “dating app”.
+
+Think “real life starts now.”
+
+⸻
+
+DESIGN GOAL
+
+The app should become instantly recognizable from a single screenshot.
+
+Design language:
+
+* Apple precision
+* Telegram speed
+* Uber clarity
+* Linear polish
+* Arc Browser personality
+
+Avoid generic startup UI.
+
+Avoid Dribbble fake concepts.
+
+Everything must be implementable.
+
+⸻
+
+CORE PRINCIPLES
+
+1. Every screen has one primary action.
+2. Maximum three hierarchy levels.
+3. One-thumb usability.
+4. 60fps animations.
+5. No visual noise.
+6. Large touch targets.
+7. Reduce cognitive load.
+8. The app should encourage opening it multiple times per day.
+
+⸻
+
+EMOTIONAL DIRECTION
+
+The app should feel like walking into a lively city at night.
+
+Mood:
+
+* anticipation
+* movement
+* warmth
+* confidence
+* mystery
+
+Never feel lonely.
+
+Never feel empty.
+
+The city should appear alive.
+
+⸻
+
+COLOR SYSTEM
+
+Base:
+
+Background #08090A
+
+Secondary surface #121417
+
+Cards #171A1E
+
+Borders #252932
+
+Primary text White
+
+Secondary text #B6BDC8
+
+Accent:
+
+Electric Blue
+
+Use sparingly.
+
+The accent exists only to guide attention.
+
+Never color everything blue.
+
+Status colors:
+
+Success
+
+Warning
+
+Error
+
+Muted
+
+Generate a complete semantic token system.
+
+⸻
+
+TYPOGRAPHY
+
+Use SF Pro Display.
+
+Create a full type scale.
+
+Examples:
+
+* Hero timer
+* H1
+* H2
+* Body
+* Caption
+* Labels
+
+Use Dynamic Type friendly sizing.
+
+⸻
+
+SPACING SYSTEM
+
+Create an 8pt spacing system.
+
+Examples:
+
+4
+
+8
+
+12
+
+16
+
+24
+
+32
+
+48
+
+64
+
+Everything aligns perfectly.
+
+⸻
+
+COMPONENT LIBRARY
+
+Design reusable components.
+
+Buttons
+
+* Primary
+* Secondary
+* Ghost
+* Icon
+
+Cards
+
+* Meetup card
+* Activity card
+* User preview
+* City leaderboard
+
+Inputs
+
+* Search
+* Chips
+* Radius selector
+
+Navigation
+
+* Bottom bar
+* Floating Action Button
+
+Map controls
+
+Badges
+
+Avatars
+
+Skeleton loaders
+
+Empty states
+
+Bottom sheets
+
+Modals
+
+Toast
+
+Every component must include:
+
+* states
+* accessibility
+* animations
+* implementation notes
+
+⸻
+
+ICON STYLE
+
+Use Lucide.
+
+Rounded.
+
+Minimal.
+
+No inconsistent icon sets.
+
+⸻
+
+MAP EXPERIENCE
+
+The map is the soul of the app.
+
+Redesign it completely.
+
+Requirements:
+
+* dark map
+* glowing activity lights
+* soft gradients
+* floating cards
+* subtle depth
+
+Never make it cluttered.
+
+⸻
+
+SIGNATURE FEATURE
+
+City Lights
+
+Instead of showing people,
+
+show glowing activity lights.
+
+Each active meetup appears as a warm glowing orb.
+
+Different activities have different glow intensity.
+
+The city should literally look alive.
+
+This becomes the visual identity of NOW.
+
+⸻
+
+COUNTDOWN SCREEN
+
+This is the hero experience.
+
+Design it like a movie scene.
+
+Large countdown.
+
+Live participant updates.
+
+Subtle motion.
+
+Breathing glow.
+
+No unnecessary buttons.
+
+The timer should create dopamine.
+
+⸻
+
+MEETUP CARD
+
+Redesign completely.
+
+Each card should communicate within one second:
+
+* activity
+* distance
+* people joined
+* time remaining
+
+Large visual hierarchy.
+
+No tiny text.
+
+⸻
+
+PROFILE
+
+Minimal.
+
+Show:
+
+* interests
+* reliability score
+* meetup history
+* achievements
+
+Avoid social media clutter.
+
+⸻
+
+LEADERBOARDS
+
+Design as premium gaming UI.
+
+City ranking.
+
+Fastest meetup.
+
+Community achievements.
+
+Should encourage competition.
+
+⸻
+
+MOTION DESIGN
+
+Create a complete animation language.
+
+Durations:
+
+120ms
+
+220ms
+
+350ms
+
+500ms
+
+Use:
+
+* spring
+* ease-out
+* shared element transitions
+
+Examples:
+
+Map zoom
+
+Card expansion
+
+Countdown start
+
+Join meetup
+
+Success celebration
+
+Everything must feel alive.
+
+⸻
+
+MICROINTERACTIONS
+
+Add delightful details.
+
+Examples:
+
+Glow pulse.
+
+Haptic feedback.
+
+Countdown vibration.
+
+Map light ripple.
+
+Button compression.
+
+Avatar reveal.
+
+These are mandatory.
+
+⸻
+
+ACCESSIBILITY
+
+Support:
+
+Large text.
+
+Color contrast.
+
+Screen readers.
+
+One-hand usage.
+
+Reduce motion mode.
+
+⸻
+
+DELIVERABLES
+
+Before writing implementation code,
+
+produce:
+
+1. Full Design System documentation.
+2. UX flow diagrams.
+3. Component inventory.
+4. Screen hierarchy.
+5. Navigation architecture.
+6. Motion specification.
+7. Design tokens.
+8. Then implement screen by screen.
+
+Do not skip planning.
+
+Build this like a product that could compete with Apple-level consumer apps.

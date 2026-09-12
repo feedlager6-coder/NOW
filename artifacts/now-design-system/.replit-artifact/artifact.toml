@@ -1,0 +1,19 @@
+kind = "design-system"
+previewPath = "/now-design-system/"
+title = "NOW Design System"
+description = "A dark, cinematic design system for NOW, a real-time social meetup app that helps adults discover spontaneous group activities nearby. It combines Apple precision, Telegram speed, Uber clarity, and Linear polish around the signature City Lights activity glow."
+version = "1.0.0"
+id = "artifacts/now-design-system"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/now-design-system/" ]
+localPort = 22692
+
+[services.development]
+run = "pnpm --filter @workspace/now-design-system run dev"
+
+[services.env]
+PORT = "22692"
+BASE_PATH = "/now-design-system/"

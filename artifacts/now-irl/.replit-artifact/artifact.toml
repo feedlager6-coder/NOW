@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "NOW / IRL"
+description = "A real-time social meetup web app for discovering spontaneous group activities in safe public zones. Users can explore live City Lights, create or join meetups, chat, check in, share, and access safety help."
+version = "1.0.0"
+id = "artifacts/now-irl"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23038
+
+[services.development]
+run = "pnpm --filter @workspace/now-irl run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/now-irl", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/now-irl/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23038"
+BASE_PATH = "/"
