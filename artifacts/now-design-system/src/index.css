@@ -209,11 +209,11 @@
   --destructive-foreground: 0 0% 100%;
   --input: 224 21.3% 17.5%;
   --ring: 218 100% 73.5%;
-  --chart-1: 38 92.1% 50.2%;
+  --chart-1: 36 87.1% 66.7%;
   --chart-2: 219 100% 64.7%;
-  --chart-3: 142 70.6% 45.3%;
-  --chart-4: 271 91% 65.1%;
-  --chart-5: 0 84.2% 60.2%;
+  --chart-3: 150 57.6% 60.2%;
+  --chart-4: 261 100% 77.5%;
+  --chart-5: 354 100% 71%;
 
   --sidebar-primary-border: hsl(var(--sidebar-primary));
   --sidebar-primary-border: hsl(from hsl(var(--sidebar-primary)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
