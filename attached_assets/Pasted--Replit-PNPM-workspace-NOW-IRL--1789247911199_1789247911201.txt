@@ -1,0 +1,450 @@
+Ты работаешь с уже существующим Replit PNPM workspace проекта NOW / IRL.
+
+Главная задача: не делать новую миграцию и не создавать новый artifact. Нужно довести существующее приложение до полноценного визуального и компонентного результата, описанного в исходном промте дизайн-директора NOW.
+
+Оригинальный промт находится здесь:
+
+attached_assets/Pasted--ROLE-You-are-the-Design-Director-of-NOW-You-previously_1789221204715.txt
+
+Прочитай его полностью перед началом работы. Он является source of truth для визуальной задачи.
+
+Текущий проект:
+
+- основной web artifact:
+  artifacts/now-irl
+- дизайн-система:
+  artifacts/now-design-system
+- API:
+  artifacts/api-server
+- canvas/mockup sandbox:
+  artifacts/mockup-sandbox
+- generated React Query client:
+  lib/api-client-react
+- OpenAPI:
+  lib/api-spec/openapi.yaml
+
+Сначала прочитай эти инструкции:
+
+1. .local/skills/react-vite/SKILL.md
+2. .local/skills/design/SKILL.md
+3. .local/skills/mockup-extract/SKILL.md
+4. .local/skills/mockup-sandbox/SKILL.md
+5. .local/skills/mockup-graduate/SKILL.md
+6. .local/skills/artifacts/SKILL.md
+7. .local/skills/workflows/SKILL.md
+8. .local/skills/validation/SKILL.md
+9. .local/skills/follow-up-tasks/SKILL.md
+10. artifacts/now-design-system/docs/AGENTS.md
+11. artifacts/now-design-system/docs/consuming-web.md
+12. artifacts/now-design-system/docs/migrating-web.md
+13. artifacts/now-design-system/docs/references/component-inventory.md
+
+Если потребуется менять API или workspace dependencies, дополнительно прочитай:
+
+- .local/skills/pnpm-workspace/SKILL.md
+- соответствующие references внутри этого skill.
+
+Не создавай новый web artifact. Используй существующие artifacts. Не заменяй проект новым scaffold.
+
+Перед редактированием:
+
+1. Проверь git status, текущую ветку и существующий remote.
+2. Проверь состояние workflows.
+3. Запусти или проверь:
+   - artifacts/now-irl: web
+   - artifacts/api-server: API Server
+   - artifacts/mockup-sandbox: Component Preview Server
+   - artifacts/now-design-system: web
+4. Сделай baseline screenshots существующего приложения как минимум на:
+   - mobile: 390x844;
+   - desktop: 1280x720.
+5. Используй mockup-extract для извлечения существующего UI из основного приложения. Не hand-code приблизительную копию текущего интерфейса.
+6. Для визуальной работы используй mockup-sandbox и design subagent.
+7. Перед размещением mockup на canvas вызови getCanvasState() и не перекрывай существующие shapes.
+8. Для product UI mockups используй именно @workspace/now-design-system и design-system entry sandbox, а не независимые токены.
+
+Критическое правило:
+
+Не считать задачу выполненной, если изменились только:
+
+- tokens.json;
+- import paths;
+- темный фон;
+- generic Button/Card;
+- несколько цветов;
+- отступы в старом App.tsx.
+
+Нужен заметный визуальный redesign существующих экранов и reusable component system.
+
+## Продуктовый контекст
+
+NOW — это real-time social operating system для города.
+
+Это не dating app, не обычная social network и не messenger.
+
+Пользователь должен за первые секунды понять:
+
+- что происходит рядом;
+- что доступно прямо сейчас;
+- где это происходит;
+- сколько людей уже присоединилось;
+- сколько мест осталось;
+- какое действие нужно сделать дальше.
+
+Главная идентичность продукта — CITY LIGHTS. Город должен ощущаться живым, но интерфейс должен оставаться простым, безопасным и production-ready.
+
+Не добавляй новые функции, которых нет в текущем MVP. Сохрани существующую функциональность.
+
+Не используй emojis в UI.
+
+## Обязательные требования к визуальной системе
+
+Следуй исходному дизайн-промту и используй semantic tokens, а не разбросанные hardcoded значения.
+
+Основные значения:
+
+- background: #050608
+- surface/card: #0E1014
+- elevated surface: #151922
+- border: #232836
+- primary text: white
+- secondary text: #B7BFCA
+- muted text: #7B8593
+- accent: electric blue
+
+Создай или доведи до полноценного состояния semantic tokens для:
+
+- primary;
+- secondary;
+- danger;
+- success;
+- warning;
+- disabled;
+- overlay;
+- glow;
+- shadow;
+- focus/ring;
+- activity-specific glow.
+
+Activity glow:
+
+- Walk — soft blue;
+- Coffee — warm amber;
+- Sport — green;
+- Games — purple;
+- Music — pink.
+
+Не добавляй Music как новую функциональность, если её нет в текущем MVP. Можно подготовить токен для будущего использования.
+
+Для каждой activity glow предусмотрены состояния:
+
+- idle;
+- breathing;
+- join pulse;
+- celebration burst.
+
+Breathing animation должна быть мягкой, около 2400ms, без агрессивного мигания.
+
+Используй строгую spacing system на основе 8pt grid:
+
+- 4;
+- 8;
+- 12;
+- 16;
+- 24;
+- 32;
+- 40;
+- 48;
+- 64.
+
+Не создавай второй независимый token source. В этом проекте `tokens.json` является источником токенов, а CSS и generated token files должны обновляться через существующий генератор.
+
+Не редактируй вручную:
+
+- artifacts/now-design-system/src/index.css;
+- artifacts/now-design-system/src/generated/tokens.tsx.
+
+После изменения tokens.json запускай существующий token generation script.
+
+Typography:
+
+- используй системный стек с SF Pro Display / SF Pro Text fallback;
+- создай понятную иерархию Hero, H1, H2, H3, Body Large, Body, Caption, Label;
+- не делай основной интерфейс мелким;
+- сохраняй читаемость и dynamic type-friendly scale.
+
+Motion:
+
+- 120ms — press, focus, micro feedback;
+- 180ms и 250ms — state changes, filters, chips;
+- 350ms — cards, bottom sheets, major transitions;
+- 500ms — hero moments, countdown, success;
+- обязательно поддержи prefers-reduced-motion;
+- не используй случайные timing values без причины;
+- документируй motion rules.
+
+Touch/accessibility:
+
+- минимум 44pt для интерактивных целей;
+- keyboard focus;
+- screen-reader labels;
+- high contrast;
+- reduced motion;
+- one-thumb usability;
+- не прячь важную информацию только в hover.
+
+## Обязательные reusable components
+
+Распредели компоненты между design system и app согласно документации:
+
+- базовые product-agnostic primitives — в design system;
+- продуктовые compositions и data-aware components — в app;
+- не создавай локальные копии компонентов, которые уже предоставляет design system.
+
+Нужны полноценные component families:
+
+- Primary Button;
+- Secondary Button;
+- Ghost Button;
+- Floating Button;
+- Icon Button;
+- Meetup Card;
+- Activity Card;
+- User Card;
+- City Lights surface/map placeholder;
+- Activity Chips;
+- Bottom Navigation;
+- Floating Action Button;
+- Top Bar;
+- Map Controls;
+- Bottom Sheet;
+- Modal;
+- Toast;
+- Avatar / Avatar Stack;
+- Badge;
+- Progress Ring;
+- Countdown Badge;
+- Skeleton Loader;
+- Empty State.
+
+Каждый компонент должен иметь:
+
+- reusable API;
+- accessibility;
+- idle state;
+- pressed state;
+- loading state;
+- disabled state, если применимо;
+- documented usage;
+- visual consistency with the system.
+
+## Экраны для обязательного redesign
+
+Сохрани существующие routes и functionality:
+
+- `/` — Discover/Home;
+- `/welcome` — welcome;
+- `/auth/login` — login;
+- `/auth/verify` — OTP verification;
+- `/onboarding/age-gate` — age gate;
+- `/onboarding/profile` — profile onboarding;
+- `/profile` — profile;
+- `/meetups/:id` — live meetup detail/chat;
+- not-found;
+- loading, empty, error, joined, checked-in, completed states.
+
+Home должен:
+
+- сразу показывать live City Lights context;
+- иметь ясную hierarchy;
+- делать Create Meetup главным действием;
+- показывать activity, distance, people, remaining spots и urgency в meetup card;
+- иметь tactile activity chips;
+- поддерживать loading/empty/error;
+- не превращаться в generic dashboard;
+- сохранять текущую API-функциональность.
+
+Meetup card должен за одну секунду сообщать:
+
+- какая активность;
+- где;
+- насколько далеко;
+- сколько людей;
+- сколько мест осталось;
+- когда начинается;
+- можно ли присоединиться.
+
+Meetup detail должен визуально поддерживать:
+
+- join;
+- leave;
+- check-in;
+- chat;
+- complete;
+- share;
+- safety action;
+- completed state.
+
+Auth и onboarding не должны выглядеть как забытые generic forms. Они должны наследовать ту же visual language и quality level.
+
+## API и функциональность
+
+Не подменяй API реальным UI mock data там, где уже есть hooks.
+
+Текущие hooks находятся в:
+
+lib/api-client-react/src/generated/api.ts
+
+Перед кодированием проверь точные сигнатуры grep-командой:
+
+grep "^export " lib/api-client-react/src/generated/*.ts | grep -E "function use|const use|QueryKey"
+
+Основные hooks, которые уже используются:
+
+- useHealthCheck
+- useListMeetups
+- useCreateMeetup
+- useGetMeetup
+- useJoinMeetup
+- useLeaveMeetup
+- useCheckInMeetup
+- useCompleteMeetup
+- useListMessages
+- useCreateMessage
+- useGetShareCard
+- useGetProfile
+- useUpdateProfile
+- useGetAuthMe
+- useLogout
+- useListInterests
+
+Импортируй hooks только из:
+
+@workspace/api-client-react
+
+Не импортируй их из относительных путей.
+
+Следи за React Query invariants:
+
+- после mutation обновляй или invalidates нужные queries;
+- mutation result должен быть виден без ручного refresh;
+- loading/error/empty branches должны быть безопасными;
+- не используй данные до проверки существования;
+- после navigation и reload состояние должно оставаться корректным;
+- не ломай существующие enum values, routes и API contracts.
+
+API сейчас demo/in-memory. Не выдавай его за production persistence или настоящую OTP-auth. Если backend не требуется для визуального redesign, не расширяй backend без необходимости. Если API всё же меняется, используй OpenAPI-first workflow, regenerate client и проверь frontend contracts.
+
+## Работа через mockup sandbox
+
+Так как redesign касается уже существующего UI:
+
+1. Извлеки реальный текущий Home и ключевые существующие components через mockup-extract.
+2. Покажи baseline Current.
+3. Создай redesign mockup against @workspace/now-design-system.
+4. Проверь mobile и desktop.
+5. Используй canvas для визуального сравнения и не iframe main app напрямую.
+6. Если создаёшь несколько вариантов, прочитай design-exploration skill и делай варианты разными design hypotheses, а не простыми reskins.
+7. Если выбранный mockup будет переноситься в production через approved design, используй mockup-graduate.
+8. Не удаляй mockup reference автоматически.
+
+Не выдавай mockup за готовое production-приложение. Production version должна использовать реальные API hooks, routing, loading/error states и accessibility.
+
+## Архитектура
+
+Текущий `artifacts/now-irl/src/App.tsx` перегружен. Раздели UI на понятные файлы и product-specific components, но не делай огромный бездумный refactor.
+
+Сохрани:
+
+- текущий wouter routing или аккуратно замени только при необходимости;
+- shared design-system imports;
+- API client;
+- ErrorBoundary;
+- существующие artifact paths;
+- managed workflows;
+- Railway behavior.
+
+Не создавай новый artifact и не создавай второй дизайн system.
+
+## Проверка результата
+
+После реализации обязательно:
+
+1. Перезапусти managed workflows:
+   - artifacts/now-design-system: web
+   - artifacts/api-server: API Server
+   - artifacts/now-irl: web
+   - artifacts/mockup-sandbox: Component Preview Server
+
+2. Проверь логи через RefreshAllLogs.
+
+3. Проверь screenshots через appPreview минимум для:
+   - `/`;
+   - `/welcome`;
+   - `/profile`;
+   - `/auth/login`;
+   - `/meetups/:id`;
+   - mobile viewport;
+   - desktop viewport.
+
+4. Проверь отсутствие browser console errors.
+
+5. Проверь API smoke scenarios:
+   - health;
+   - list meetups;
+   - create meetup;
+   - join;
+   - message;
+   - check-in;
+   - complete;
+   - profile.
+
+6. Запусти:
+   - pnpm run typecheck
+   - pnpm run typecheck:libs
+   - pnpm --filter @workspace/api-server run typecheck
+   - pnpm --filter @workspace/now-design-system run typecheck
+   - pnpm --filter @workspace/now-irl run typecheck
+   - PORT=23038 BASE_PATH=/ pnpm --filter @workspace/now-irl run build
+
+7. Выполни git diff --check.
+
+8. Проведи отдельный visual audit:
+   - spacing consistency;
+   - typography;
+   - token usage;
+   - touch target size;
+   - reduced motion;
+   - accessibility;
+   - component reuse;
+   - loading/error/empty states;
+   - mobile and desktop;
+   - no generic untouched legacy screens.
+
+Не завершай работу, пока визуальный screenshot действительно не отличается от старого интерфейса и не соответствует исходному промту.
+
+## Критерий готовности
+
+Готовым считается не “приложение собирается”.
+
+Готовый результат должен:
+
+- заметно выглядеть как новая premium NOW / City Lights система;
+- сохранять все текущие MVP flows;
+- иметь reusable components;
+- использовать общую design system без локальных дублей;
+- иметь documented tokens, motion и component usage;
+- работать на mobile и desktop;
+- иметь проверенные interactive states;
+- не содержать generic old UI;
+- пройти typecheck, build, workflow logs, screenshots и API smoke tests.
+
+Перед финальным ответом честно сравни результат с исходным промтом. Если изменены только цвета и токены — задача не выполнена.
+
+Перед завершением прочитай follow-up-tasks skill. Не создавай повторно уже существующие задачи:
+
+- Take your app mobile
+- Make a promo video for your app
+- Create a pitch deck for your app
+
+Не отмечай задачу complete, пока visual redesign и design-system foundation реально не реализованы и не проверены.
